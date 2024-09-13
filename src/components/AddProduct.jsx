@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 import axios from 'axios'; 
 import abifile from '../abi.json';
@@ -12,6 +12,7 @@ const AddItemForm = ({ onClose }) => {
   const [image, setImage] = useState(null); 
   const [imageUrl, setImageUrl] = useState(''); 
   const [loading, setLoading] = useState(false);
+  const [isImageUploaded,setIsImageUploaded] = useState()
   const abi = abifile.abi;
 
   const uploadImageToIPFS = async (file) => {
@@ -37,27 +38,49 @@ const AddItemForm = ({ onClose }) => {
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const addItemToBlockchain = async () => {
     setLoading(true);
-
     try {
-      const imageUrl = await uploadImageToIPFS(image); 
+      if (!imageUrl && image) {
+        const uploadedImageUrl = await uploadImageToIPFS(image);
+        console.log('Uploaded Image URL:', uploadedImageUrl);
+        setImageUrl(uploadedImageUrl);
+        setIsImageUploaded(true);
+      }
 
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const contract = new ethers.Contract(contractAddress, abi, provider.getSigner());
-  
-      const tx = await contract.addItem(name, ethers.utils.parseEther(cost), quantity, imageUrl);
-      await tx.wait();
-  
-      console.log('Item added successfully:', tx);
-      onClose(); 
-    } catch (error) {
-      console.error('Error adding item:', error);
+      console.log('Final Image URL:', imageUrl);
+
+      if (window.ethereum) {
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const signer = provider.getSigner();
+        const dappzon = new ethers.Contract(contractAddress, abi, signer);
+
+        const tx = await dappzon.addItem(name, imageUrl, ethers.utils.parseEther(cost), quantity);
+        await tx.wait();
+
+        alert('Item added successfully!');
+      } else {
+        alert('MetaMask is required.');
+      }
+    } catch (err) {
+      console.error('Error adding item to blockchain:', err);
+      alert('Failed to add item.');
     } finally {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (isImageUploaded) {
+      addItemToBlockchain();
+    }
+  }, [isImageUploaded]);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    await addItemToBlockchain();
+  };
+
 
   return (
     <div className='w-[500px]'>
