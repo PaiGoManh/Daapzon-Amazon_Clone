@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { ethers } from 'ethers';
 import axios from 'axios'; 
 import abifile from '../abi.json';
 
-const contractAddress = '0xa967B79a88b70Fc7B4F44a5992d7C688170664eC'; 
+const contractAddress = '0xDB6794d0344B5cbF7A6BB3aaa5aC152172e782A9'; 
 
 const AddItemForm = ({ onClose }) => {
   const [name, setName] = useState('');
@@ -12,7 +12,6 @@ const AddItemForm = ({ onClose }) => {
   const [image, setImage] = useState(null); 
   const [imageUrl, setImageUrl] = useState(''); 
   const [loading, setLoading] = useState(false);
-  const [isImageUploaded,setIsImageUploaded] = useState()
   const abi = abifile.abi;
 
   const uploadImageToIPFS = async (file) => {
@@ -35,30 +34,34 @@ const AddItemForm = ({ onClose }) => {
       }
     } catch (error) {
       console.error('Error uploading image:', error);
+      return null;
     }
   };
 
-  const addItemToBlockchain = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     setLoading(true);
     try {
-      if (!imageUrl && image) {
-        const uploadedImageUrl = await uploadImageToIPFS(image);
-        console.log('Uploaded Image URL:', uploadedImageUrl);
-        setImageUrl(uploadedImageUrl);
-        setIsImageUploaded(true);
-      }
+      let finalImageUrl = imageUrl;
 
-      console.log('Final Image URL:', imageUrl);
+      if (image) {
+        finalImageUrl = await uploadImageToIPFS(image);
+        if (!finalImageUrl) {
+          throw new Error('Failed to upload image');
+        }
+        setImageUrl(finalImageUrl);
+      }
 
       if (window.ethereum) {
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const signer = provider.getSigner();
         const dappzon = new ethers.Contract(contractAddress, abi, signer);
 
-        const tx = await dappzon.addItem(name, imageUrl, ethers.utils.parseEther(cost), quantity);
+        const tx = await dappzon.addItem(name, finalImageUrl, ethers.utils.parseEther(cost), quantity);
         await tx.wait();
 
         alert('Item added successfully!');
+        onClose(); // Close the form on success
       } else {
         alert('MetaMask is required.');
       }
@@ -69,18 +72,6 @@ const AddItemForm = ({ onClose }) => {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    if (isImageUploaded) {
-      addItemToBlockchain();
-    }
-  }, [isImageUploaded]);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    await addItemToBlockchain();
-  };
-
 
   return (
     <div className='w-[500px]'>

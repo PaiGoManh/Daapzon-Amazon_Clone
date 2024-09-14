@@ -35,7 +35,6 @@ contract Dappzon {
         admin = msg.sender;
     }
 
-    // Add item by admin
     function addItem(string memory _name, string memory _imageUrl, uint _cost, uint _quantity) public onlyAdmin {
         require(_cost > 0, "Cost must be greater than 0");
         require(_quantity > 0, "Quantity must be greater than 0");
@@ -46,7 +45,6 @@ contract Dappzon {
         emit ItemAdded(itemCount, _name, _cost, _quantity, _imageUrl);
     }
 
-    // Purchase an item
     function purchaseItem(uint _id) public payable noReentrancy {
         Item storage item = items[_id];
         require(item.id > 0 && item.id <= itemCount, "Item does not exist");
@@ -66,8 +64,15 @@ contract Dappzon {
         emit ItemPurchased(_id, msg.sender, item.quantity);
     }
 
-    // View a specific item
     function getItem(uint _id) public view returns (Item memory) {
         return items[_id];
+    }
+
+    function getAllItems() public view returns (Item[] memory) {
+        Item[] memory allItems = new Item[](itemCount);
+        for (uint i = 0; i < itemCount; i++) {
+            allItems[i] = items[i + 1];
+        }
+        return allItems;
     }
 }

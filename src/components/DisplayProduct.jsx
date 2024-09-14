@@ -1,68 +1,43 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 import abifile from '../abi.json';
-import AddItemForm from './AddProduct';
 
-const ItemsList = () => {
+const contractAddress = '0xd00ca5cD171F1e9466f5E449f73Aa0D84C24cF86'; 
+
+const DisplayItems = () => {
   const [items, setItems] = useState([]);
-  const [provider, setProvider] = useState(null);
-  const [contract, setContract] = useState(null);
-  const [account, setAccount] = useState('');
-  const [loading, setLoading] = useState(false); 
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedSection, setSelectedSection] = useState('');
-  const contractAddress = '0xa967B79a88b70Fc7B4F44a5992d7C688170664eC';
+  const [loading, setLoading] = useState(true);
   const abi = abifile.abi;
+  const provider = new ethers.providers.Web3Provider(window.ethereum);
+  const contract = new ethers.Contract(contractAddress, abi, provider.getSigner());
 
-  const sections = ["Men Fashion", "Household Equipments", "Electronics and Equipments"];
-
-  const initializeContract = async () => {
-    try {
-      if (!window.ethereum) {
-        console.error('MetaMask is not installed.');
-        return;
-      }
-
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const contract = new ethers.Contract(contractAddress, abi, provider.getSigner());
-      const accounts = await provider.send('eth_requestAccounts', []);
-      setProvider(provider);
-      setContract(contract);
-      setAccount(accounts[0]);
-      console.log('Account:', accounts[0]);
-
-    } catch (error) {
-      console.error('Error initializing provider and contract:', error);
-    }
-  };
 
   const fetchItems = async () => {
     try {
-      if (!provider || !contract) {
-        console.log('Provider or contract is not set up.');
-        return;
+      if (window.ethereum) {
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const dappzon = new ethers.Contract(contractAddress, abi, provider);
+
+        const count = await dappzon.itemCount();
+        const itemsArray = [];
+
+        for (let i = 1; i <= count; i++) {
+          const item = await dappzon.getItem(i);
+          itemsArray.push(item);
+        }
+
+        setItems(itemsArray);
+      } else {
+        alert('MetaMask is required.');
       }
-
-      setLoading(true); 
-
-      const itemCount = await contract.itemCount();
-      console.log('Item count:', itemCount.toString());
-
-      const itemsArray = [];
-      for (let i = 1; i <= itemCount; i++) {
-        const item = await contract.getItem(i);
-        itemsArray.push(item);
-      }
-      console.log('Fetched items:', itemsArray);
-      setItems(itemsArray);
-    } catch (error) {
-      console.error('Error fetching items:', error);
+    } catch (err) {
+      console.error('Error fetching items:', err);
     } finally {
-      setLoading(false); 
+      setLoading(false);
     }
   };
 
-  const handleBuy = async (itemId, itemCost) => {
+  const purchaseItem = async (itemId, itemCost) => {
     try {
       if (!provider || !contract) return;
 
@@ -84,126 +59,35 @@ const ItemsList = () => {
     }
   };
 
-  const openModal = (section) => {
-    setSelectedSection(section);
-    setIsModalOpen(true);
-  };
+
+  useEffect(() => {
+    fetchItems();
+  }, []);
+
+  if (loading) {
+    return <div>Loading items...</div>;
+  }
 
   return (
-    <div className="flex flex-col p-6">
-      {/* Fetch Items Button */}
-      <button
-        onClick={fetchItems}
-        className="md:ml-[90%] text-white bg-orange-700  font-medium rounded-md text-sm px-5 py-2.5 text-center md:w-[120px]"
-      >
-        Fetch Items
-      </button>
-
-      {sections.map((section) => (
-        <div key={section} className="mt-8">
-          <div className="text-2xl font-bold ml-[15%]">
-            {section}
-            <hr className="mt-4 border-2 border-gray w-[800px]" />
+    <div className='space-y-4 mt-7'>
+      <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Available Products</h3>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {items.map(item => (
+          <div key={item.id.toString()} className="bg-white p-4 rounded-lg shadow-lg">
+            <img src={item.imageUrl} alt={item.name} className="w-full h-48 object-cover rounded-lg mb-4"/>
+            <h4 className="text-lg font-semibold text-gray-900 dark:text-white">{item.name}</h4>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              Cost: {ethers.utils.formatEther(item.cost.toString())} ETH
+            </p>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              Quantity: {item.quantity.toString()}
+            </p>
+            <button onClick={() => purchaseItem(item.id, item.cost)}>Buy</button>
           </div>
-
-          <div className="flex flex-wrap gap-6 mt-4">
-            {loading ? (
-              <div className="w-full text-center py-6">
-                <p className="text-gray-700">Loading...</p>
-              </div>
-            ) : items.length > 0 ? (
-              items
-                .filter((item) => item.category === section)
-                .map((item) => (
-                  <div
-                    key={item.id.toString()}
-                    className="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
-                  >
-                    <img className="rounded-t-lg" src={item.imageUrl} alt={item.name} />
-                    <div className="p-5">
-                      <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-                        {item.name}
-                      </h5>
-                      <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">Description</p>
-                      <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
-                        {ethers.utils.formatEther(item.cost.toString())} ETH
-                      </p>
-                      <a
-                        onClick={() => handleBuy(item.id.toString(), item.cost.toString())}
-                        href="#"
-                        className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                      >
-                        Buy
-                        <svg
-                          className="rtl:rotate-180 w-3.5 h-3.5 ms-2"
-                          aria-hidden="true"
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 14 10"
-                        >
-                          <path
-                            stroke="currentColor"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M1 5h12m0 0L9 1m4 4L9 9"
-                          />
-                        </svg>
-                      </a>
-                    </div>
-                  </div>
-                ))
-            ) : (
-              <div className="w-full text-center py-6">
-                <p className="text-gray-700">No items available in {section}.</p>
-              </div>
-            )}
-
-            <button
-              onClick={() => openModal(section)}
-              className=" ml-[15%] mb-4 text-black border border-1 border-black w-[200px] h-[300px] focus:ring-4 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center"
-            >
-              <span className="text-9xl">+</span>
-            </button>
-          </div>
-        </div>
-      ))}
-
-      {isModalOpen && (
-        <div
-          id="authentication-modal"
-          className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-50"
-        >
-          <div className="relative p-4 w-full max-w-md max-h-full bg-white rounded-lg shadow dark:bg-gray-700">
-            <button
-              onClick={() => setIsModalOpen(false)}
-              className="absolute top-2 right-2 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 inline-flex justify-center items-center"
-            >
-              <svg
-                className="w-3 h-3"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 14 14"
-              >
-                <path
-                  stroke="currentColor"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
-                />
-              </svg>
-              <span className="sr-only">Close modal</span>
-            </button>
-
-            {/* Pass the selected section to the AddItemForm */}
-            <AddItemForm section={selectedSection} onClose={() => setIsModalOpen(false)} />
-          </div>
-        </div>
-      )}
+        ))}
+      </div>
     </div>
   );
 };
 
-export default ItemsList;
+export default DisplayItems;
