@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Nav from './components/Nav';
 import AddProduct from './components/AddProduct';
-import Product from './components/DisplayProduct'; // Assuming this is the correct component
+import Product from './components/DisplayProduct'; 
 
 const App = () => {
   return (

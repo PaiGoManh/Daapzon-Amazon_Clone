@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { ethers } from 'ethers';
 import axios from 'axios'; 
 import abifile from '../abi.json';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
-const contractAddress = '0xDB6794d0344B5cbF7A6BB3aaa5aC152172e782A9'; 
+const contractAddress = '0xAd1D670725c7912F64d25Eaf163Ab46de4c1d9d7'; 
 
 const AddItemForm = ({ onClose }) => {
   const [name, setName] = useState('');
@@ -60,14 +62,16 @@ const AddItemForm = ({ onClose }) => {
         const tx = await dappzon.addItem(name, finalImageUrl, ethers.utils.parseEther(cost), quantity);
         await tx.wait();
 
-        alert('Item added successfully!');
-        onClose(); // Close the form on success
+        toast.success('Item added successfully!');
+        onClose();
+        window.location.reload();
+        
       } else {
-        alert('MetaMask is required.');
+        toast.error('MetaMask is required.');
       }
     } catch (err) {
       console.error('Error adding item to blockchain:', err);
-      alert('Failed to add item.');
+      toast.error('failed to add item, verify admin');
     } finally {
       setLoading(false);
     }
@@ -75,6 +79,7 @@ const AddItemForm = ({ onClose }) => {
 
   return (
     <div className='w-[500px]'>
+      <ToastContainer/>
       <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
         Add New Product
       </h3>

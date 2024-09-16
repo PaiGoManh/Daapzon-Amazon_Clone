@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import DisplayItems from '../components/DisplayProduct';
 import AddItemForm from '../components/AddProduct';
+import logo from '../assets/logo.svg';
 
 const Nav = () => {
   const [account, setAccount] = useState(null);
@@ -30,12 +31,15 @@ const Nav = () => {
 
   return (
     <>
-      <div className='flex justify-center text-white text-3xl pt-7 gap-[20%] w-screen h-20 bg-gray-900'>
-        <div>
-          Daapazon
+      <div className='flex justify-center items-center text-white text-3xl  gap-[20%] w-screen h-20 bg-gray-900 pl-3 '>
+        <div className='flex items-center'>
+          <div className='mb-6'>
+            <img src={logo} alt='logo'/>
+          </div>
+          <div className=''>Daapazon</div>
         </div>
         <input type='text' className='md:pt-[-10px] w-[400px] h-8 text-black text-l rounded-md pl-3' />
-        <div className='text-xl p-2 h-10 bg-orange-600 pl-6'>
+        <div className='text-xl p-2 h-10 bg-orange-600 pl-6 mr-[1%]'>
           {account ? (
             <span>{`${account.slice(0, 8)}...${account.slice(-4)}`}</span>
           ) : (
