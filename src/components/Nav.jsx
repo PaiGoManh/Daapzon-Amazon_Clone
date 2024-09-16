@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import DisplayItems from '../components/DisplayProduct';
 import AddItemForm from '../components/AddProduct';
 import logo from '../assets/logo.svg';
+import { IoSearch } from "react-icons/io5";
 
 const Nav = () => {
   const [account, setAccount] = useState(null);
@@ -38,7 +39,15 @@ const Nav = () => {
           </div>
           <div className=''>Daapazon</div>
         </div>
-        <input type='text' className='md:pt-[-10px] w-[400px] h-8 text-black text-l rounded-md pl-3' />
+        <div className="relative flex items-center">
+          <IoSearch className="absolute left-2 w-5 h-5 text-gray-400" />
+          <input 
+            type="text" 
+            className="w-[400px] h-8 pl-10 text-black text-xl rounded-md "
+            placeholder="" 
+          />
+        </div>
+
         <div className='text-xl p-2 h-10 bg-orange-600 pl-6 mr-[1%]'>
           {account ? (
             <span>{`${account.slice(0, 8)}...${account.slice(-4)}`}</span>
