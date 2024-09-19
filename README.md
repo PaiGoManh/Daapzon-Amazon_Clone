@@ -33,7 +33,7 @@ Before you get started, make sure you have the following:
 
 1. **Clone the repository**:
 
-   ``
+   ```
    git clone https://github.com/PaiGoManh/Daapzon-Amazon_Clone.git
    cd Daapzon
-   ``
+   ```
