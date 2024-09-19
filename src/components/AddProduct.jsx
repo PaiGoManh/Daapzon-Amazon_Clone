@@ -23,8 +23,8 @@ const AddItemForm = ({ onClose }) => {
   
       const res = await axios.post("https://api.pinata.cloud/pinning/pinFileToIPFS", formData, {
         headers: {
-          'pinata_api_key': 'f2c2eb5b64d31eebde0a',
-          'pinata_secret_api_key': 'a57b183f94688bb91447d34cc438920533a44608ea1c68c1554b7f6f7b777a72',
+          'pinata_api_key': process.env.PINATA_API_KEY,
+          'pinata_secret_api_key': process.env.PINATA_SECRET_API_KEY,
           'Content-Type': 'multipart/form-data'
         },
       });
