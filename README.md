@@ -26,7 +26,8 @@ Before you get started, make sure you have the following:
 
 - 🖥 [Node.js](https://nodejs.org/)
 - 📦 [npm](https://www.npmjs.com/) (usually installed with Node.js)
-- 🔐 [MetaMask](https://metamask.io/)
+- 🔐 [MetaMask](https://metamask.io/)PINATA_API_KEY=f2c2eb5b64d31eebde0a
+PINATA_SECRET_API_KEY=a57b183f94688bb91447d34cc438920533a44608ea1c68c1554b7f6f7b777a72
 - 💰 Ethereum wallet with testnet ETH
 
 ### Installation
@@ -55,6 +56,8 @@ Before you get started, make sure you have the following:
    INFURA_URL=your infura url
    PRIVATE_KEY=your metmask private key
    ETHERSCAN_API_KEY= your etherscan private key
+   PINATA_API_KEY=your pinata api key
+   PINATA_SECRET_API_KEY=your pinata secret key
    ```
 6. **Start Local Blockchain Node:**
 
@@ -89,5 +92,18 @@ Before you get started, make sure you have the following:
     ```
     npm run dev
     ```
-10. 
+10. Connect MetaMask:
+
+      Open the app in your browser.
+      Connect MetaMask and make transactions.
+      Securely buy, sell, or review products.
+
+## 🙌 Contributing
+   
+   Contributions are welcome! Please fork the repository and submit a pull request with your proposed changes.
+   
+   Thank you for checking out the Daapzon App. We hope you enjoy exploring and purchasing products in a       
+   decentralized marketplace! 🎉
+   
+   Happy Shopping! 🛍️
 
