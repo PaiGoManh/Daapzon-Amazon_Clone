@@ -97,6 +97,12 @@ Before you get started, make sure you have the following:
       Connect MetaMask and make transactions.
       Securely buy, sell, or review products.
 
+## 📜 License
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
+
+![MIT License](https://img.shields.io/badge/License-MIT-blue.svg)
+
+
 ## 🙌 Contributing
    
    Contributions are welcome! Please fork the repository and submit a pull request with your proposed changes.
