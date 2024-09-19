@@ -26,8 +26,7 @@ Before you get started, make sure you have the following:
 
 - 🖥 [Node.js](https://nodejs.org/)
 - 📦 [npm](https://www.npmjs.com/) (usually installed with Node.js)
-- 🔐 [MetaMask](https://metamask.io/)PINATA_API_KEY=f2c2eb5b64d31eebde0a
-PINATA_SECRET_API_KEY=a57b183f94688bb91447d34cc438920533a44608ea1c68c1554b7f6f7b777a72
+- 🔐 [MetaMask](https://metamask.io/)
 - 💰 Ethereum wallet with testnet ETH
 
 ### Installation
