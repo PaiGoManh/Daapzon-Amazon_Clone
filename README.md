@@ -49,7 +49,7 @@ Before you get started, make sure you have the following:
    npm i hardhat
    npx hardhat compile
    ```
-5. **Add an ``.env`` file
+5. **Add an ``.env`` file**
    
    ```
    INFURA_URL=your infura url
