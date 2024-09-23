@@ -27,7 +27,6 @@ const DisplayItems = () => {
           itemsArray.push(item);
         }
 
-        // Filter out items where the quantity is zero
         const filteredItems = itemsArray.filter(item => item.quantity > 0);
 
         setItems(filteredItems);
@@ -57,7 +56,7 @@ const DisplayItems = () => {
       await tx.wait();
       console.log('Transaction successful:', tx);
 
-      await fetchItems(); // Refresh items after purchase
+      await fetchItems(); 
     } catch (error) {
       console.error('Error handling buy:', error);
     }

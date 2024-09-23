@@ -23,8 +23,8 @@ const AddItemForm = ({ onClose }) => {
   
       const res = await axios.post("https://api.pinata.cloud/pinning/pinFileToIPFS", formData, {
         headers: {
-          'pinata_api_key': process.env.PINATA_API_KEY,
-          'pinata_secret_api_key': process.env.PINATA_SECRET_API_KEY,
+          'pinata_api_key': 'your pinata private api key here',
+          'pinata_secret_api_key': 'your pinata secret api key here',
           'Content-Type': 'multipart/form-data'
         },
       });
@@ -56,6 +56,9 @@ const AddItemForm = ({ onClose }) => {
 
       if (window.ethereum) {
         const provider = new ethers.providers.Web3Provider(window.ethereum);
+        
+        await window.ethereum.request({ method: 'eth_requestAccounts' });
+
         const signer = provider.getSigner();
         const dappzon = new ethers.Contract(contractAddress, abi, signer);
 
@@ -71,11 +74,12 @@ const AddItemForm = ({ onClose }) => {
       }
     } catch (err) {
       console.error('Error adding item to blockchain:', err);
-      toast.error('failed to add item, verify admin');
+      toast.error('Failed to add item, verify admin and MetaMask connection.');
     } finally {
       setLoading(false);
     }
   };
+
 
   return (
     <div className='w-[500px]'>
