@@ -57,20 +57,34 @@ Before you get started, make sure you have the following:
    ETHERSCAN_API_KEY= your etherscan private key
    PINATA_API_KEY=your pinata api key
    PINATA_SECRET_API_KEY=your pinata secret key
+
+   is the pinata api api is not working you can directly need to give the
+   pinata api key and
+   pinata secret key in the add product code
+   in line no:24 , Addproduct.jsx
    ```
-6. **Start Local Blockchain Node:**
+   const res = await axios.post("https://api.pinata.cloud/pinning/pinFileToIPFS", formData, {
+      headers: {
+         'pinata_api_key': 'your pinata private api key here',
+         'pinata_secret_api_key': 'your pinata secret api key here',
+         'Content-Type': 'multipart/form-data'
+      },
+   });
+   
+   ```
+7. **Start Local Blockchain Node:**
 
    ```
    npx hardhat node
    ```
-7. **Deploy Contracts:**
+8. **Deploy Contracts:**
 
    Open another terminal:
 
    ```
    npx hardhat run ./scripts/deploy.js --network infura
    ```
-8. **update the contract address in frontend**
+9. **update the contract address in frontend**
 
    Here in src/components you have two jsx files,
       1. AddProduct.jsx
@@ -86,12 +100,12 @@ Before you get started, make sure you have the following:
            ```
         in the jsx files
      
-9. **Run Frontend:**
+10. **Run Frontend:**
 
     ```
     npm run dev
     ```
-10. Connect MetaMask:
+11. Connect MetaMask:
 
       Open the app in your browser.
       Connect MetaMask and make transactions.
